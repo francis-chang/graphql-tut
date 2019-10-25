@@ -1,17 +1,46 @@
 import { GraphQLServer } from "graphql-yoga";
 
+// String, Boolean, Int, Float, ID
+
+const data = [
+    {
+        title: "wtf",
+        body: "Yooo"
+    },
+    {
+        title: "hiii",
+        body: "hellooo"
+    }
+];
+
 //Type definitions (schema)
 const typeDefs = `
-    type Query {
-        hello: String!
+    type Query{
+        posts(query: String): [Post!]!
+        post: Post
+    } 
+    type Post{
+        title: String!
+        body: String!
     }
 `;
 
 //Resolvers
 const resolvers = {
     Query: {
-        hello() {
-            return "This is my first query";
+        posts(parent, args, ctx, info) {
+            if (args.query) {
+                return data.filter(post =>
+                    post.body.toLowerCase().includes(args.query)
+                );
+            }
+            return data;
+        },
+        post() {
+            return {
+                title: "gg",
+                body: "wtf"
+            };
         }
     }
 };
