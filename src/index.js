@@ -1,55 +1,56 @@
 import { GraphQLServer } from "graphql-yoga";
 
 // String, Boolean, Int, Float, ID
-
-const data = [
+const posts = [
     {
-        title: "wtf",
-        body: "Yooo"
+        id: 123,
+        title: "hello",
+        body: "hello123",
+        author: "francis"
     },
     {
-        title: "hiii",
-        body: "hellooo"
+        id: 456,
+        title: "hell2o",
+        body: "hello123",
+        author: "asdf"
+    },
+    {
+        id: 789,
+        title: "hell3o",
+        body: "hello123",
+        author: "treb"
+    },
+    {
+        id: 1235,
+        title: "hello5",
+        body: "hello12323",
+        author: "hgsew"
     }
 ];
 
-//Type definitions (schema)
 const typeDefs = `
-    type Query{
-        posts(query: String): [Post!]!
-        post: Post
-    } 
-    type Post{
+    type Query {
+        posts(filter: String): [Post!]!
+    }
+    type Post {
+        id: Int!
         title: String!
         body: String!
+        author: String!
     }
 `;
 
-//Resolvers
 const resolvers = {
     Query: {
-        posts(parent, args, ctx, info) {
-            if (args.query) {
-                return data.filter(post =>
-                    post.body.toLowerCase().includes(args.query)
-                );
+        posts(_, args) {
+            if (args.filter) {
+                return posts.filter(post => post.title.includes(args.filter));
             }
-            return data;
-        },
-        post() {
-            return {
-                title: "gg",
-                body: "wtf"
-            };
+            return posts;
         }
     }
 };
 
-const server = new GraphQLServer({
-    typeDefs,
-    resolvers
-});
+const server = new GraphQLServer({ typeDefs, resolvers });
 
-server.start(() => {
-    console.log("The server is up");
-});
+server.start();
